@@ -1,0 +1,26 @@
+Configuration:
+  status: info
+
+  Appenders:
+    Console:
+      name: Console
+      target: SYSTEM_OUT
+      PatternLayout:
+        Pattern: "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"
+    RollingRandomAccessFile:
+      name: RollingRandomAccessFile
+      fileName: 'logs/kotimiliar.log'
+      filePattern: 'logs/leonword-%d{yyyy-MM-dd}-%i.log.gz'
+      PatternLayout:
+        Pattern: "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"
+      Policies:
+        SizeBasedTriggeringPolicy:
+          size: '250 MB'
+  Loggers:
+    Root:
+      level: info
+      AppenderRef:
+        -
+         ref: Console
+        -
+         ref: RollingRandomAccessFile

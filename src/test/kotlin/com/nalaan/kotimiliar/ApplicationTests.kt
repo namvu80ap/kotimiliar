@@ -1,4 +1,4 @@
-package hello
+package com.nalaan.kotimiliar
 
 import org.junit.Test
 import org.junit.runner.RunWith

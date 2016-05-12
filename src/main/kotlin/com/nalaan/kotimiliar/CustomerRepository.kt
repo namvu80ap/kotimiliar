@@ -1,4 +1,4 @@
-package hello
+package com.nalaan.kotimiliar
 
 import org.springframework.data.repository.CrudRepository
 
