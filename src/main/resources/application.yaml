@@ -2,8 +2,17 @@
 spring:
   profiles:
     active: development
-
-#Production env default config
+#  main:
+#    banner-mode: 'off'
+banner:
+  location: 'classpath:banner.txt'
+#Config for shell-remote
+#TODO : Disable spring-boot banner when login shell
+shell:
+  ssh:
+    port: 2000
+#  command-path-patterns: 'classpath*:/commands/**'
+#Production env config
 ---
 spring:
   profiles: produciton
@@ -13,7 +22,7 @@ server:
 logging:
   config: 'classpath:log4j2.yaml'
 
-#Development env default config
+#Development env config
 ---
 spring:
   profiles: development
