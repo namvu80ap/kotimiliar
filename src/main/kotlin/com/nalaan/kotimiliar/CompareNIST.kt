@@ -1,4 +1,4 @@
-package com.nalaan.kotimiliar.core
+package com.nalaan.kotimiliar
 
 
 import java.util.*
@@ -321,18 +321,18 @@ object CompareNIST {
         val len_t = t.length
         val max_l = Math.max(len_s, len_t)
 
-        val d = Array(max_l,{ DoubleArray(0) })
+        val d = Array(max_l,{ DoubleArray(max_l) })
         d[0] = DoubleArray(max_l + 1)
 
-        for (i in 0..d[0].size - 1) {
+        for (i in 0..d[0].size - 1 ) {
             d[0][i] = i.toDouble()
         }
-        for (i in 1..len_s + 1 - 1) {
+        for (i in 1..len_s - 1) {
             d[i] = DoubleArray(max_l + 1)
             d[i][0] = i.toDouble()
         }
 
-        for (i in 0..len_s - 1) {
+        for (i in 0..len_s - 2) {
             for (j in 0..len_t - 1) {
                 // System.out.println(i + " " + j);
                 var minCost = effInfinity.toDouble()

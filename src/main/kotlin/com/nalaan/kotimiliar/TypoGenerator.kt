@@ -1,7 +1,7 @@
 /**
 
  */
-package com.nalaan.kotimiliar.core
+package com.nalaan.kotimiliar
 
 import java.util.Collections
 import java.util.HashMap
