@@ -1,8 +1,11 @@
 package com.nalaan.kotimiliar
 
-
-import java.util.*
+/**
+ * Created by nam.vu on 2016/05/16.
+ */
 import java.util.concurrent.ConcurrentLinkedQueue
+import java.io.File;
+import java.util.*
 
 /**
  * @author Vu Hoai Nam
@@ -23,109 +26,52 @@ import java.util.concurrent.ConcurrentLinkedQueue
  *
  *For more information about NIST algorithm, please check [NIST](http://hissa.nist.gov/~black/GTLD/tldVisualSimilarity.html)
  */
-object CompareNIST {
+open class CompareNIST {
 
-    private val similarMap = HashMap<String, Set<String>>()
-    private val pointMap = HashMap<String, Map<String, Double>>()
+    open var similarMap = HashMap<String, MutableSet<String>>()
+    open var pointMap = HashMap<String, MutableMap<String, Double>>()
 
+    fun generateSimiliarStr(original: String, threshold: Int): HashMap<String, Int> {
+        val mapOfSimiliarChar = getMapOfSimiilarSet(original);
+        val rtList = HashMap<String, Int>()
+        original.indices.forEach {
+            charAt -> val charList = mapOfSimiliarChar[original[charAt]]
+                charList!!.forEach {
+                    //replace first char
+                    chr -> val tmp1 = original.replaceRange(charAt,charAt+1,chr)
+                    println("tmp1" + tmp1)
+                    val score = (compareShortStr(original, tmp1) * 100).toInt()
+                    if( score >= threshold )
+                      rtList.put(tmp1,score)
 
-    /**
-     * Generate String using recursive.
-
-     * @param original The original base word where processed to generate the similar words
-     * *
-     * @param threshold The bottom limit of percentage.( The similar word will be from threshold to 99% )
-     * *
-     * @return HashMap< String , Integer >
-     * * String is the key of no duplicate words , Integer is the score compared with the word
-     */
-    fun generateStr(original: String, threshold: Int): HashMap<String, Int> {
-        var original = original
-
-        original = original.toLowerCase()
-
-        //create the collection of similar char
-        val listSimiliarChr = ArrayList<Set<String>>()
-        for (i in 0..original.length - 1) {
-            val chr = original[i].toString()
-            val setChr = HashSet<String>()
-            setChr.add(chr)
-            val similarChar = similarMap.get(chr)
-
-            if (similarChar != null)
-                setChr.addAll(similarChar)
-
-            listSimiliarChr.add(setChr)
-        }
-
-        val tmp = ConcurrentLinkedQueue<String>()
-        val tmp2 = ConcurrentLinkedQueue<String>()
-
-        println(listSimiliarChr)
-
-        //Check where recurse to go 
-        var charAt = 0
-
-        val doubleCharBuff = StringBuffer(original)
-        val originalBuff = StringBuffer(original)
-
-        var doubleSimilar: Set<String>? = null
-
-        //Recurse the char collection list
-        for (set in listSimiliarChr) {
-            charAt++
-            if (tmp.size > 0) {
-
-                //In case replace one char
-                for (str in set) {
-
-                    for (tmpStr in tmp) {
-
-						tmpStr.plus(tmp)
-
-                        val builder = StringBuilder()
-
-                        builder.append(tmpStr)
-
-                        builder.append(originalBuff.substring(charAt))
-
-                        val tmpCompareStr = builder.toString()
-
-                        val score = (compareShortStr(original, tmpCompareStr) * 100).toInt()
-
-                        if (score >= threshold)
-                            tmp2.add(tmpStr)
+                    //replace next char
+                    if( charAt < original.lastIndex ) {
+                      val charList2 = mapOfSimiliarChar[original[charAt + 1]]
+                      charList2!!.forEach {
+                          chr2 -> val tmp2 = tmp1.replaceRange(charAt + 1, charAt + 2, chr2)
+                          println("tmp2" + tmp2)
+                          val score2 = (compareShortStr(original, tmp2) * 100).toInt()
+                          if (score2 >= threshold)
+                              rtList.put(tmp2, score2)
+                      }
                     }
+
                 }
 
-                //In case from second charAt - search the double similar
-                if (charAt > 1) {
-                    doubleSimilar = similarMap[doubleCharBuff.substring(charAt - 2, charAt)]
-                    //For double char replace
-                    if (doubleSimilar != null) {
-                        for (similarCharWithDouble in doubleSimilar) {
-                            val processCharBuff = StringBuffer(original)
-                            processCharBuff.replace(charAt - 2, charAt, similarCharWithDouble)
-                            val score = (compareShortStr(original, processCharBuff.toString()) * 100).toInt()
-                            if (score >= threshold)
-                                tmp2.add(processCharBuff.toString())
-                        }
-                    }
-                }
-
-                tmp.clear()
-                tmp.addAll(tmp2)
-            } else
-                tmp.addAll(set)
         }
+//        println("SIZE : " + rtList.size)
+        return rtList
+    }
 
-
-        val listResult = compareWithNIST(original, tmp2.toArray<String>(arrayOfNulls<String>(tmp2.size)), threshold)
-
-        //Remove the 100% similar item
-        listResult.remove(original)
-
-        return listResult
+    private fun getMapOfSimiilarSet( str : String ) : MutableMap<Char,MutableSet<String>> {
+        val map : MutableMap<Char,MutableSet<String>> = mutableMapOf<Char,MutableSet<String>>()
+        for( charAt in str ){
+            if( similarMap.containsKey(charAt.toString()) ){
+                val similarChar = similarMap[charAt.toString()]!!
+                map.put( charAt, similarChar)
+            }
+        }
+        return map;
     }
 
     /**
@@ -146,15 +92,15 @@ object CompareNIST {
      */
     fun compareWithNIST(left: String, right: Array<String>, threshold: Int): HashMap<String, Int> {
 
-        CompareNIST.init()
+        init()
         val resultList = ArrayList<Double>()
 
         for (i in right.indices) {
-            val result = CompareNIST.howConfusableAre(left, right[i])
+            val result = howConfusableAre(left, right[i])
             resultList.add(result)
         }
 
-        var listResult = HashMap<String, Int>()
+        val listResult = HashMap<String, Int>()
 
         //Populate the list result to HashMap
         if (resultList.size == right.size)
@@ -164,9 +110,8 @@ object CompareNIST {
                     listResult.put(right[i], strScore)
             }
 
-		//Legacy code
-        //return listResult = BmaSimilarList.sortHashMapByValues(listResult)
-		return listResult;
+        //        return listResult = BmaSimilarList.sortHashMapByValues(listResult);
+        return listResult
     }
 
 
@@ -186,37 +131,6 @@ object CompareNIST {
             return 1.0
     }
 
-    /**
-     * Compare the short string
-     * @param word The word be compared with list string ( lstStr )
-     * *
-     * @param lstStr List String wish to compare with word.
-     * *
-     * @return Set The list of lstStr with score compared to word
-     */
-//    fun compareWithList(word: String, lstStr: Array<String>): List<SimilarWord> {
-//
-//        if (similarMap == null || pointMap == null) {
-//            init()
-//        }
-//        val returnSet = ArrayList<SimilarWord>()
-//
-//        for (i in lstStr.indices) {
-//            println("LIne" + lstStr[i])
-//            if (lstStr[i] != null && lstStr[i] != "") {
-//
-//                val similarWord = SimilarWord()
-//                val str = lstStr[i].toLowerCase()
-//                similarWord.setWord(str)
-//                similarWord.setScore(howConfusableInt(word, str))
-//                similarWord.setTypos(TypoGenerator().isTypos(word, str))
-//                returnSet.add(similarWord)
-//
-//            }
-//        }
-//        return returnSet
-//    }
-
 
     /**
      * Init the similar Map
@@ -226,43 +140,44 @@ object CompareNIST {
      * And similar point to Map, Map, Double>>
      */
     fun init() {
-        val loader = CompareNIST::class.java.classLoader
-
-        //TODO - Make dynamic reading the mapping source when run on server on test on local
+        val loader = CompareNIST::class.java!!.getClassLoader()
+        val file : File = File(loader.getResource("mapping.txt").getFile());
+        //TODO - Make dynamic reading the mapping source when run on server on test on local or get from Memory
         //URL location = CompareNIST.class.getProtectionDomain().getCodeSource().getLocation();
-        val sc = Scanner(loader.getResourceAsStream("mapping"))
+
+        val sc = Scanner(file)
         while (sc.hasNextLine()) {
             val ch1 = sc.next().toLowerCase()
             val ch2 = sc.next().toLowerCase()
             val point = java.lang.Double.parseDouble(sc.next())
 
-            var set1: Set<String>? = similarMap.get(ch1)
+            var set1: MutableSet<String>? = similarMap[ch1]
             if (set1 == null) {
                 set1 = HashSet<String>()
                 similarMap.put(ch1, set1)
             }
-            set1.plus(ch2)
+            set1.add(ch2)
 
-            var set2: Set<String>? = similarMap.get(ch2)
+            var set2: MutableSet<String>? = similarMap[ch2]
             if (set2 == null) {
                 set2 = HashSet<String>()
                 similarMap.put(ch2, set2)
             }
-            set2.plus(ch1)
+            set2.add(ch1)
 
-            var map1: Map<String, Double>? = pointMap.get(ch1)
+            var map1: MutableMap<String, Double>? = pointMap.get(ch1)
             if (map1 == null) {
                 map1 = HashMap<String, Double>()
                 pointMap.put(ch1, map1)
             }
-            map1.plus( Pair(ch2, point))
+            map1.put( ch2, point)
 
-            var map2: Map<String, Double>? = pointMap.get(ch2)
+            var map2: MutableMap<String, Double>? = pointMap.get(ch2)
             if (map2 == null) {
                 map2 = HashMap<String, Double>()
                 pointMap.put(ch2, map2)
             }
-            map2.plus( Pair(ch1, point))
+            map2.plus( Pair(ch1, point) )
         }
     }
 
@@ -309,7 +224,8 @@ object CompareNIST {
      * *
      * @return bouble The distant between s and t
      */
-    private fun levenshtein(s: String, t: String): Double {
+
+    fun levenshtein(s: String, t: String): Double {
         var s = s
         var t = t
         s = s.toLowerCase()
@@ -321,20 +237,19 @@ object CompareNIST {
         val len_t = t.length
         val max_l = Math.max(len_s, len_t)
 
-        val d = Array(max_l,{ DoubleArray(max_l) })
-        d[0] = DoubleArray(max_l + 1)
+        val d: Array<Array<Double>> = Array(max_l + 1, { i -> Array<Double>(max_l + 1, { x -> x.toDouble()} )} )
 
-        for (i in 0..d[0].size - 1 ) {
+        for (i in 0..d[0].size - 1) {
             d[0][i] = i.toDouble()
         }
-        for (i in 1..len_s - 1) {
-            d[i] = DoubleArray(max_l + 1)
+
+        for (i in 1..len_s + 1 - 1) {
+            d[i] = Array<Double>(max_l + 1, { i -> i.toDouble() })
             d[i][0] = i.toDouble()
         }
 
-        for (i in 0..len_s - 2) {
+        for (i in 0..len_s - 1) {
             for (j in 0..len_t - 1) {
-                // System.out.println(i + " " + j);
                 var minCost = effInfinity.toDouble()
 
                 // delete
@@ -410,7 +325,7 @@ object CompareNIST {
      * @return double the repetitionInsert between s and t
      */
     private fun repetitionInsert(s: String, i: Int, t: String, j: Int): Double {
-        if (i < 1 || j < 2 || s.substring(i - 1, i + 1) != t.substring(j - 2, j) || t.substring(j - 2, j) !== String(charArrayOf(t[j],t[j])) ) {
+        if (i < 1 || j < 2 || s.substring(i - 1, i + 1) != t.substring(j - 2, j) || t.substring(j - 2, j) != t[j].toString().plus(t[j]) ) {
             return -1.0
         }
 
@@ -432,7 +347,8 @@ object CompareNIST {
             point = 1.0
         } else {
             if (pointMap.containsKey(ch1)) {
-                val p = pointMap.get(ch1)?.get(ch2)
+                var match = pointMap.get(ch1)
+                val p = match?.get(ch2)
                 if (p != null) {
                     point = p
                 }

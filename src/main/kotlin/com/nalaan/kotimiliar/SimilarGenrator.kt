@@ -39,6 +39,7 @@ object SimilarGenrator {
      */
     private var threshold: Int = 0
 
+    private var compareNIST = CompareNIST()
     /**
      * Generate the words with just replace one char
      */
@@ -339,7 +340,7 @@ object SimilarGenrator {
     fun runCompare(list: Set<String>, word: String): Map<String, Int> {
 
 		val array = list.toTypedArray()
-        val returnList = CompareNIST.compareWithNIST(word, array, 80)
+        val returnList = compareNIST.compareWithNIST(word, array, 80)
 
         //Remove the 100% similar item
         returnList.remove(word)
@@ -356,7 +357,7 @@ object SimilarGenrator {
     fun runCompare(list: Set<String>, word: String, threshold: Int, isAll: Boolean): Map<String, Int> {
 
         val array = list.toTypedArray()
-        val returnList = CompareNIST.compareWithNIST(word, array, threshold)
+        val returnList = compareNIST.compareWithNIST(word, array, threshold)
 
         //Remove the 100% similar item
         returnList.remove(word)

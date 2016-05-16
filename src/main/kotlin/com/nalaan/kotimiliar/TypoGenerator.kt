@@ -12,6 +12,8 @@ import java.util.HashMap
  */
 class TypoGenerator {
 
+    private var compareNIST = CompareNIST()
+
     fun getAllTypos(word: String): Map<String, Map<String, Int>> {
 
 
@@ -76,7 +78,7 @@ class TypoGenerator {
 
                 for (j in charList.indices) {
                     tempWord.replace(i, i + 1, charList[j])
-                    typos.put(tempWord.toString(), CompareNIST.howConfusableInt(word, tempWord.toString()))
+                    typos.put(tempWord.toString(), compareNIST.howConfusableInt(word, tempWord.toString()))
                 }
             }
         }
@@ -116,7 +118,7 @@ class TypoGenerator {
 
 
             }
-            typos.put(tempWord.toString(), CompareNIST.howConfusableInt(word, tempWord.toString()))
+            typos.put(tempWord.toString(), compareNIST.howConfusableInt(word, tempWord.toString()))
         }
 
 		///TODO legacy
@@ -150,7 +152,7 @@ class TypoGenerator {
                 tempWord.replace(i, i + 1, tempNextChar)
                 tempWord.replace(i + 1, i + 2, tempChar)
 
-                typos.put(tempWord.toString(), CompareNIST.howConfusableInt(word, tempWord.toString()))
+                typos.put(tempWord.toString(), compareNIST.howConfusableInt(word, tempWord.toString()))
             }
         }
 
@@ -180,7 +182,7 @@ class TypoGenerator {
             } else
                 tempWord.append(wordBuffer.substring(i + 1))
 
-            typos.put(tempWord.toString(), CompareNIST.howConfusableInt(word, tempWord.toString()))
+            typos.put(tempWord.toString(), compareNIST.howConfusableInt(word, tempWord.toString()))
         }
 
 		///TODO legacy
