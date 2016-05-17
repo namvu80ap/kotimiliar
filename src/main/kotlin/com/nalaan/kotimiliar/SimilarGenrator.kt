@@ -338,7 +338,7 @@ object SimilarGenrator {
      * @return Map, Integer> list word with score
      */
     fun runCompare(list: Set<String>, word: String): Map<String, Int> {
-
+        compareNIST.init()
 		val array = list.toTypedArray()
         val returnList = compareNIST.compareWithNIST(word, array, 80)
 
@@ -355,7 +355,7 @@ object SimilarGenrator {
      * @return Map, Integer> list word with score
      */
     fun runCompare(list: Set<String>, word: String, threshold: Int, isAll: Boolean): Map<String, Int> {
-
+        compareNIST.init()
         val array = list.toTypedArray()
         val returnList = compareNIST.compareWithNIST(word, array, threshold)
 

@@ -31,6 +31,10 @@ open class CompareNIST {
     open var similarMap = HashMap<String, MutableSet<String>>()
     open var pointMap = HashMap<String, MutableMap<String, Double>>()
 
+    /**
+     * Created by Vu Hoai Nam
+     * Converted legacy Similiar of NIST from python to kotlin
+     */
     fun generateSimiliarStr(original: String, threshold: Int): HashMap<String, Int> {
         val mapOfSimiliarChar = getMapOfSimiilarSet(original);
         val rtList = HashMap<String, Int>()
@@ -39,7 +43,7 @@ open class CompareNIST {
                 charList!!.forEach {
                     //replace first char
                     chr -> val tmp1 = original.replaceRange(charAt,charAt+1,chr)
-                    println("tmp1" + tmp1)
+                    //println("tmp1" + tmp1)
                     val score = (compareShortStr(original, tmp1) * 100).toInt()
                     if( score >= threshold )
                       rtList.put(tmp1,score)
@@ -49,7 +53,7 @@ open class CompareNIST {
                       val charList2 = mapOfSimiliarChar[original[charAt + 1]]
                       charList2!!.forEach {
                           chr2 -> val tmp2 = tmp1.replaceRange(charAt + 1, charAt + 2, chr2)
-                          println("tmp2" + tmp2)
+                          //println("tmp2" + tmp2)
                           val score2 = (compareShortStr(original, tmp2) * 100).toInt()
                           if (score2 >= threshold)
                               rtList.put(tmp2, score2)
