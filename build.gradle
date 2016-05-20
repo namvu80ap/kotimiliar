@@ -40,7 +40,7 @@ dependencies {
 
 //	compile('org.springframework.boot:spring-boot-starter-aop')
 //	compile('org.springframework.boot:spring-boot-starter-cache')
-//	compile('org.springframework.boot:spring-boot-starter-data-cassandra')
+	compile('org.springframework.boot:spring-boot-starter-data-cassandra')
 //	compile('org.springframework.boot:spring-boot-starter-jta-atomikos')
 //	compile('org.springframework.retry:spring-retry')
 	compile('org.springframework.boot:spring-boot-starter-security')
@@ -56,6 +56,10 @@ dependencies {
 //Exclude logback in all package for using log4j2
 configurations {
 	all*.exclude module : 'spring-boot-starter-logging'
+}
+
+springBoot {
+	mainClass = "com.nalaan.kotimiliar.ApplicationKt"
 }
 
 task wrapper(type: Wrapper) {

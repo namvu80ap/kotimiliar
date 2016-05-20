@@ -1,5 +1,7 @@
 package com.nalaan.kotimiliar
 
+
+import com.datastax.driver.core.utils.UUIDs;
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -8,6 +10,7 @@ import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
+import java.util.*
 
 @SpringBootApplication
 open class Application {
@@ -27,11 +30,11 @@ open class Application {
 		log.warn("This is log {} ", "nam log warning");
 		log.trace("This is log {} ", "nam log trace");
 		// save a couple of customers
-		repository.save(Customer("Jack", "Bauer"))
-		repository.save(Customer("Chloe", "O'Brian"))
-		repository.save(Customer("Kim", "Bauer"))
-		repository.save(Customer("David", "Palmer"))
-		repository.save(Customer("Michelle", "Dessler"))
+		repository.save(Customer(UUIDs.timeBased(),"Jack", "Bauer" ))
+		repository.save(Customer(UUIDs.timeBased(),"Chloe", "O'Brian"))
+		repository.save(Customer(UUIDs.timeBased(), "Kim", "Bauer"))
+		repository.save(Customer(UUIDs.timeBased(),"David", "Palmer"))
+		repository.save(Customer(UUIDs.timeBased(),"Michelle", "Dessler"))
 
 		// fetch all customers
 		log.info("Customers found with findAll():")
@@ -42,11 +45,11 @@ open class Application {
 		log.info("")
 
 		// fetch an individual customer by ID
-		val customer = repository.findOne(1L)
-		log.info("Customer found with findOne(1L):")
-		log.info("--------------------------------")
-		log.info(customer.toString())
-		log.info("")
+//		val customer = repository.findOne(1L)
+//		log.info("Customer found with findOne(1L):")
+//		log.info("--------------------------------")
+//		log.info(customer.toString())
+//		log.info("")
 
 		// fetch customers by last name
 		log.info("Customer found with findByLastName('Bauer'):")

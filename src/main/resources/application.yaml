@@ -13,9 +13,19 @@ shell:
     port: 2000
 #  command-path-patterns: 'classpath*:/commands/**'
 #Production env config
+
+#spring.data.cassandra.port=9042
+#spring.data.cassandra.keyspace-name=mykeyspace
+#spring.data.cassandra.contact-points=192.168.56.101
+
 ---
 spring:
   profiles: produciton
+  data:
+      cassandra:
+        port: 9042
+        keyspace-name: mykeyspace
+        contact-points: 192.168.56.101
 server:
   address: localhost
 #Logging configure
@@ -26,6 +36,11 @@ logging:
 ---
 spring:
   profiles: development
+  data:
+    cassandra:
+      port: 9042
+      keyspace-name: mykeyspace
+      contact-points: 192.168.56.101
 security:
   user:
     name: namvu
